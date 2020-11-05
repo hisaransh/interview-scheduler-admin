@@ -4,6 +4,7 @@ import MultiSelect from "react-multi-select-component";
 import 'react-date-range/dist/styles.css'; // main style file for calendar component
 import 'react-date-range/dist/theme/default.css'; // theme css file for calendar component
 import { Calendar } from 'react-date-range';
+import {addDays,isAfter,isBefore,format,setMinutes,setHours,setSeconds,addMinutes} from 'date-fns'
 
 const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
     const [options,handleOptions] = useState([]);
@@ -111,10 +112,9 @@ const ScheduleInterview = () => {
         description:"",
         interviewer:[],
         interviewee:[],
-        startTime:"",
-        endTime:"",
     })
     const [selectedDate,handleSelectedDate] = useState(new Date())
+    console.log("SELECTED DATA",selectedDate)
     const [eventDataTime,handleEventDateTime] = useState({
         "start":"",
         "end":""
@@ -122,9 +122,47 @@ const ScheduleInterview = () => {
     function handleSelect(e){
         handleSelectedDate(e)
     }
+    function getHours(dateString){
+        return parseInt(dateString.split(':')[0]);
+    }
+    function getMinutes(dateString){
+        return parseInt(dateString.split(':')[1]);
+    }
     function saveMeeting(){
         let re = new RegExp("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$");
         if(eventData.interviewee.length >= 1 && eventData.interviewer.length >= 1 && re.test(eventDataTime.start)==true && re.test(eventDataTime.end)==true){
+            //Converting Start Time and End time to Date() object;
+            let tempStartDate = selectedDate;
+            tempStartDate = setHours(tempStartDate,getHours(eventDataTime.start));
+            tempStartDate = setMinutes(tempStartDate,getMinutes(eventDataTime.start));
+            tempStartDate = setSeconds(tempStartDate,0);
+
+            let tempEndDate = selectedDate;
+            tempEndDate = setHours(tempEndDate,getHours(eventDataTime.end));
+            tempEndDate = setMinutes(tempEndDate,getMinutes(eventDataTime.end));
+            tempEndDate = setSeconds(tempEndDate,0);
+
+            let api_data = {
+                title:eventData.title,
+                description:eventData.description,
+                interviewer:eventData.interviewer,
+                interviewee:eventData.interviewee,
+                selected_date:selectedDate,
+                start_time:tempStartDate,
+                end_time:tempEndDate
+            }
+            console.log("API DATA",api_data);
+            fetch('http://localhost:8080/api/save-meeting',{
+                "method":"POST",
+                "body":JSON.stringify(api_data),
+                "headers":{
+                    "Content-type":"application/json"
+                }
+            })
+            .then((response)=>response.json())
+            .then(response => {
+                console.log("API RESPONSE",response)
+            })
             
         }
     }
