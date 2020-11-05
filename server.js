@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 
 require('dotenv').config()
 const uri = process.env.DB_CONNECTION
-const port = process.env.PORT
+const port = 8080
 
 mongoose.connect(uri,{useNewUrlParser:true,useUnifiedTopology: true},() =>
   console.log('App is now connected to DB!!!')
