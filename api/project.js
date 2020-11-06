@@ -114,4 +114,15 @@ router.post('/save-meeting',async(req,res) =>{
 
 })
 
+router.post('/get-meetings',async(req,res)=>{
+    console.log("/get-meetings api called",req.body);
+
+    meetingData = await Meeting.find({});
+    console.log(meetingData)
+    res.json({
+        status:true,
+        data:meetingData
+    })
+})
+
 module.exports = router;

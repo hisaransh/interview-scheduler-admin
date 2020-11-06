@@ -168,9 +168,7 @@ const ScheduleInterview = () => {
     }
     return (
         <div className="mb-5">
-            <nav className="navbar navbar-light bg-light">
-                <a className="navbar-brand" href="#">Navbar</a>
-            </nav>
+            
             <div className="container-div1 d-flex flex-column">
                 <div>
                         Lets Schedule a interview
