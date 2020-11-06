@@ -266,8 +266,8 @@ const ScheduleInterview = () => {
         }else{
             return <div>
                 Following people also have event at same time.Please reschedule it.
-                {clashingArray.map((val)=> (
-                    <div>
+                {clashingArray.map((val,index)=> (
+                    <div key={index}>
                         {val}
                     </div>
                 ))}
@@ -278,7 +278,7 @@ const ScheduleInterview = () => {
     return (
         <div className="mb-5">
             <div className="container-div1 d-flex flex-column">
-                <div>
+                <div style={{fontSize:'20px'}}>
                         Lets Schedule a interview
                 </div>
                 <div className="mt-2" style={{width:'322px'}}>
@@ -286,8 +286,8 @@ const ScheduleInterview = () => {
                         <div>
                             Title *
                         </div>
-                        <div className="mt-1" style={{width:'38px'}}>
-                            <input type="text" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
+                        <div className="mt-1" style={{height:'38px'}}>
+                            <input type="text" style={{height:'100%',width:'100%',padding:'1vh'}} value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.titleError}
@@ -299,32 +299,32 @@ const ScheduleInterview = () => {
                             Description
                         </div>
                         <div className="mt-1">
-                            <textarea style={{height:'150px'}} value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
+                            <textarea style={{height:'150px',width:'100%',padding:'1vh'}} value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Select Interviewer(s) *
                         </div>
-                        <div>
+                        <div className="mt-1">
                             <MultiSelectInterviwer interviewer={eventData.interviewer} handleEventData={handleEventData}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.interviewerError}
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Select Interviewee(s) *
                         </div>
-                        <div>
+                        <div className="mt-1">
                             <MultiSelectInterviwee interviewee={eventData.interviewee} handleEventData={handleEventData}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.intervieweeError}
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Choose Date *
                         </div>
@@ -336,11 +336,11 @@ const ScheduleInterview = () => {
                         />
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Time in 24 Hour Format *
                         </div>
-                        <div className="d-flex">
+                        <div className="d-flex mt-2">
                             <div>Start Time</div>
                             <div>&nbsp;&nbsp;&nbsp;</div>
                             <div>End Time</div>
@@ -355,7 +355,7 @@ const ScheduleInterview = () => {
                         </div>
                     </div>
                     <ShowClashingPeople />
-                    <div className="mt-2">
+                    <div className="mt-4">
                         <button className="btn btn-primary" onClick={saveMeeting}>Save</button>
                     </div>
                     

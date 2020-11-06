@@ -297,9 +297,11 @@ export default function EditInterview(){
         })
         .then((response)=>response.json())
         .then(response => {
+            console.log("RESPONSE  ",response)
             if(response.status === true && response.clash === false){
                 handleUpdated(true)
             }else if(response.status === true && response.clash === true){
+                console.log(response)
                 handleClashingArray(response.clashArray)
             }else{
                 handleErrors({
@@ -318,8 +320,8 @@ export default function EditInterview(){
         }else{
             return <div>
                 Following people also have event at same time.Please reschedule it.
-                {clashingArray.map((val)=> (
-                    <div>
+                {clashingArray.map((val,index)=> (
+                    <div key={index}>
                         {val}
                     </div>
                 ))}
@@ -406,7 +408,7 @@ export default function EditInterview(){
                             {errors.timeError}
                         </div>
                     </div>
-                    {/* <ShowClashingPeople /> */}
+                    <ShowClashingPeople />
                     <div className="mt-2">
                         <button className="btn btn-primary" onClick={updateMeeting} >Update</button>
                     </div>

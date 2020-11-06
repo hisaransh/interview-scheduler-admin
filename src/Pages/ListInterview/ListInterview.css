@@ -1,7 +1,10 @@
 .container-div1{
-    margin-left: 10%;
-    margin-right: 10%;
-    padding: 2vh;
+    margin-left: 13%;
+    margin-right: 13%;
+    padding: 4vh;
+    min-width: 540px;
+    margin-top: 30px;
+    border-radius: 18px;
 }
 .meeting-div{
     margin: 2vh;
@@ -9,12 +12,14 @@
     border: 1px solid grey;
     min-height: 150px;
     min-width: 308px;
+    max-width: 308px;
+    border-radius:18px;
 }
 .meeting-title{
-    font-size: 30px;
+    font-size: 20px;
     
 }
 .meeting-details{
     font-size:15px;
-    margin-left:4px
+    margin-left: 10px;
 }

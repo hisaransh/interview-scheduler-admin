@@ -254,12 +254,13 @@ router.post('/update-meeting',async(req,res)=>{
     }
     console.log(clashArray)
     if(clashArray.length>0){
+        console.log("IN")
         res.json({
             status:true,
             clash:true,
             clashArray:clashArray
         })
-        
+        console.log("RETURNED")
         return;
     }
 
