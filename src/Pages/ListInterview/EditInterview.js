@@ -1,24 +1,26 @@
-import './ScheduleInterview.css'
-import {useState,useEffect} from 'react'
-import MultiSelect from "react-multi-select-component";
+import { useEffect ,useState} from "react";
 import 'react-date-range/dist/styles.css'; // main style file for calendar component
 import 'react-date-range/dist/theme/default.css'; // theme css file for calendar component
 import { Calendar } from 'react-date-range';
+import MultiSelect from "react-multi-select-component";
 import {addDays,isAfter,isBefore,format,setMinutes,setHours,setSeconds,addMinutes} from 'date-fns'
-import { id } from 'date-fns/locale';
-import{
-    Link
-    } from "react-router-dom"
-const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams,
+    Redirect,
+    useLocation
+  } from "react-router-dom";
+
+  const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
     const [options,handleOptions] = useState([]);
     const [optionSelected, handleOptionSelected] = useState(interviewer);
     const [loading,handleLoading] = useState(true);
-
+    console.log("OPTION SELECTED",optionSelected)
     function changeSelectedOptionHelper(e){
-        handleEventData((prevState) => ({
-            ...prevState,
-            interviewer:e
-        }))
+        handleEventData(e)
     }
     useEffect(()=>{
         fetch('http://localhost:8080/api/get-interviewer')
@@ -27,6 +29,7 @@ const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
             if(response.status === true){
                 console.log(response)
                 let tempOptionsArray = [];
+                let tempOptionsSelectedArray = [];
                 for(let i=0;i<response.data.length;i++){
                     tempOptionsArray.push({
                         label:response.data[i].name,
@@ -58,17 +61,13 @@ const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
     );
 }
 
-
 const MultiSelectInterviwee = ({interviewee,handleEventData}) => {
     const [options,handleOptions] = useState([]);
     const [optionSelected, handleOptionSelected] = useState(interviewee);
     const [loading,handleLoading] = useState(true);
 
     function changeSelectedOptionHelper(e){
-        handleEventData((prevState) => ({
-            ...prevState,
-            interviewee:e
-        }))
+        handleEventData(e)
     }
     useEffect(()=>{
         fetch('http://localhost:8080/api/get-interviewee')
@@ -109,15 +108,17 @@ const MultiSelectInterviwee = ({interviewee,handleEventData}) => {
     );
 }
 
-const ScheduleInterview = () => {
+
+export default function EditInterview(){
+    let MeetingData = useLocation().state
+    console.log(MeetingData)
     const [eventData,handleEventData] = useState({
         title:"",
         description:"",
-        interviewer:[],
-        interviewee:[],
     })
+    const [interviewer,handleInterviewer] = useState([]);
+    const [interviewee,handleInterviewee] = useState([]);
     const [selectedDate,handleSelectedDate] = useState(new Date())
-    console.log("SELECTED DATA",selectedDate)
     const [eventDataTime,handleEventDataTime] = useState({
         "start":"",
         "end":""
@@ -128,8 +129,85 @@ const ScheduleInterview = () => {
         interviewerError:"",
         timeError:""
     })
-    const [isInterviewCreated,handleInterviewCreated] = useState(false);
     const [clashingArray,handleClashingArray] = useState([]);
+    const [updated,handleUpdated] = useState(false);
+    useEffect(()=>{
+        handleEventData({
+            title:MeetingData.data.title,
+            description:MeetingData.data.description,
+        })
+        handleSelectedDate(new Date(MeetingData.data.meeting_date));
+        let event_start_time = new Date(MeetingData.data.start_time);
+        let event_end_time = new Date(MeetingData.data.end_time);
+        let start_time_string = "";
+        if(event_start_time.getHours()<=9){
+            start_time_string = "0" + event_start_time.getHours().toString();
+        }else{
+            start_time_string = event_start_time.getHours().toString();
+        }
+        start_time_string += ":"
+        if(event_start_time.getMinutes()<=9){
+            start_time_string += "0" + event_start_time.getMinutes().toString();
+        }else{
+            start_time_string += event_start_time.getMinutes().toString();
+        }
+        let end_time_string = "";
+        if(event_end_time.getHours()<=9){
+            end_time_string = "0" + event_end_time.getHours().toString();
+        }else{
+            end_time_string = event_end_time.getHours().toString();
+        }
+        end_time_string += ":"
+        if(event_end_time.getMinutes()<=9){
+            end_time_string += "0" + event_end_time.getMinutes().toString();
+        }else{
+            end_time_string += event_end_time.getMinutes().toString();
+        }
+        console.log(start_time_string)
+        console.log(end_time_string)
+        handleEventDataTime({
+            "start":start_time_string,
+            "end":end_time_string
+        })
+    },[])
+    useEffect(()=>{
+        fetch('http://localhost:8080/api/get-interviewer')
+        .then(response => response.json())
+        .then((response) => {
+            if(response.status === true){
+                let tempOptionsSelectedArray = [];
+                for(let i=0;i<response.data.length;i++){
+                    if((MeetingData.data.interviewer).includes(response.data[i]._id)){
+                        tempOptionsSelectedArray.push({
+                            label:response.data[i].name,
+                            value:response.data[i]._id
+                        })
+                    }
+                }
+                console.log("INTERVIEWER",tempOptionsSelectedArray)
+                handleInterviewer(tempOptionsSelectedArray);
+
+            }
+        })
+    },[])
+    useEffect(()=>{
+        fetch('http://localhost:8080/api/get-interviewee')
+        .then(response => response.json())
+        .then((response) => {
+            if(response.status === true){
+                let tempOptionsSelectedArray = [];
+                for(let i=0;i<response.data.length;i++){
+                    if((MeetingData.data.interviewee).includes(response.data[i]._id)){
+                        tempOptionsSelectedArray.push({
+                            label:response.data[i].name,
+                            value:response.data[i]._id
+                        })
+                    }
+                }
+                handleInterviewee(tempOptionsSelectedArray)
+            }
+        })
+    },[])
     function handleSelect(e){
         handleSelectedDate(e)
     }
@@ -139,23 +217,22 @@ const ScheduleInterview = () => {
     function getMinutes(dateString){
         return parseInt(dateString.split(':')[1]);
     }
-    function saveMeeting(){
+    function updateMeeting(){
         let flag = true;
         let titleErrorCheck = "";
         let intervieweeErrorCheck = "";
         let interviewerErrorCheck = "";
         let timeErrorCheck = "";
-        console.log(eventData);
-        console.log(eventDataTime)
+        
         if(eventData.title === ""){
             titleErrorCheck="Title is required field";
             flag = false;
         }
-        if(eventData.interviewee.length == 0){
+        if(interviewee.length == 0){
             intervieweeErrorCheck="Choose at least 1 interviewee"
             flag = false;
         }
-        if(eventData.interviewer.length == 0){
+        if(interviewer.length == 0){
             interviewerErrorCheck="Choose at least 1 interviewer"
             flag = false;
         }
@@ -198,26 +275,20 @@ const ScheduleInterview = () => {
                 timeError:timeErrorCheck
             })
             return;
-        }else{
-            handleErrors({
-                titleError:"",
-                intervieweeError:"",
-                interviewerError:"",
-                timeError:""
-            })
         }
-        
+
         let api_data = {
             title:eventData.title,
             description:eventData.description,
-            interviewer:eventData.interviewer,
-            interviewee:eventData.interviewee,
+            interviewer:interviewer,
+            interviewee:interviewee,
             selected_date:selectedDate,
             start_time:tempStartDate,
-            end_time:tempEndDate
+            end_time:tempEndDate,
+            meeting_id:MeetingData.data._id
         }
         console.log("API DATA",api_data);
-        fetch('http://localhost:8080/api/save-meeting',{
+        fetch('http://localhost:8080/api/update-meeting',{
             "method":"POST",
             "body":JSON.stringify(api_data),
             "headers":{
@@ -226,26 +297,8 @@ const ScheduleInterview = () => {
         })
         .then((response)=>response.json())
         .then(response => {
-            console.log("GOT RESPONSE",response)
-            if(response.status === true && response.clash == false){
-                handleEventData({
-                    title:"",
-                    description:"",
-                    interviewer:[],
-                    interviewee:[],
-                })
-                handleSelectedDate(new Date());
-                handleEventDataTime({
-                    "start":"",
-                    "end":""
-                })
-                handleErrors({
-                    titleError:"",
-                    intervieweeError:"",
-                    interviewerError:"",
-                    timeError:""
-                })
-                handleInterviewCreated(true)
+            if(response.status === true && response.clash === false){
+                handleUpdated(true)
             }else if(response.status === true && response.clash === true){
                 handleClashingArray(response.clashArray)
             }else{
@@ -257,8 +310,7 @@ const ScheduleInterview = () => {
                 })
             }
         })
-        
-    
+
     }
     function ShowClashingPeople(){
         if(clashingArray.length === 0){
@@ -274,12 +326,12 @@ const ScheduleInterview = () => {
             </div>
         }
     }
-    if(isInterviewCreated === false){
+    if(updated === false){
     return (
         <div className="mb-5">
             <div className="container-div1 d-flex flex-column">
                 <div>
-                        Lets Schedule a interview
+                        Edit the following Interview
                 </div>
                 <div className="mt-2" style={{width:'322px'}}>
                     <div className="mt-4">
@@ -307,7 +359,7 @@ const ScheduleInterview = () => {
                             Select Interviewer(s) *
                         </div>
                         <div>
-                            <MultiSelectInterviwer interviewer={eventData.interviewer} handleEventData={handleEventData}/>
+                            <MultiSelectInterviwer interviewer={interviewer} handleEventData={handleInterviewer}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.interviewerError}
@@ -318,7 +370,7 @@ const ScheduleInterview = () => {
                             Select Interviewee(s) *
                         </div>
                         <div>
-                            <MultiSelectInterviwee interviewee={eventData.interviewee} handleEventData={handleEventData}/>
+                            <MultiSelectInterviwee interviewee={interviewee} handleEventData={handleInterviewee}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.intervieweeError}
@@ -354,21 +406,20 @@ const ScheduleInterview = () => {
                             {errors.timeError}
                         </div>
                     </div>
-                    <ShowClashingPeople />
+                    {/* <ShowClashingPeople /> */}
                     <div className="mt-2">
-                        <button className="btn btn-primary" onClick={saveMeeting}>Save</button>
+                        <button className="btn btn-primary" onClick={updateMeeting} >Update</button>
                     </div>
                     
                 </div>
             </div>
         </div>
-    )}else{
-        return (<div>
-            Your Meeting saved
-            <Link to="/">List all interview</Link>
-            </div>)
+    )}
+    else{
+        return (
+            <div>
+                Meeting updated
+            </div>
+        )
     }
 }
-
-
-export default ScheduleInterview;

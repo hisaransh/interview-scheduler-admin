@@ -1,6 +1,12 @@
 .container-div1{
-    border: 0.3vh solid black;
+    border: 1px solid black;
     margin-left: 10%;
     margin-right: 10%;
     padding: 2vh;
+}
+
+.timeinput{
+    height: 40px;
+    width: 74px;
+    text-align: center;
 }

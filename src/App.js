@@ -1,6 +1,7 @@
 
 import ScheduleInterview from "./Pages/ScheduleInterview"
 import ListInterview from "./Pages/ListInterview"
+import EditInterview from "./Pages/ListInterview/EditInterview"
 import Navbar from "./Pages/Navbar"
 import {
   BrowserRouter as Router,
@@ -16,9 +17,12 @@ function App() {
           <Route path="/new-interview" exact>
                 <ScheduleInterview/>
           </Route>
-        <Route path="/">
-              <ListInterview/>
-        </Route>
+          <Route path="/edit-interview" exact>
+                <EditInterview/>
+          </Route>
+          <Route path="/">
+                <ListInterview/>
+          </Route>
       </Switch>
     </Router>
   );
