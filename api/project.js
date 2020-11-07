@@ -5,7 +5,88 @@ const router = express.Router()
 const User = require('../Models/UserSchema');
 const Meeting = require('../Models/MeetingSchema');
 const ObjectId = require("mongodb").ObjectID
-const { addDays ,isAfter,isBefore,setHours,setMinutes,setSeconds } = require('date-fns');
+const { addDays ,isAfter,isBefore,setHours,setMinutes,setSeconds,areIntervalsOverlapping } = require('date-fns');
+var nodemailer = require('nodemailer');
+const ics = require('ics')
+
+var transporter = nodemailer.createTransport({
+    host: "smtp-mail.outlook.com", // hostname
+    secureConnection: false, // TLS requires secureConnection to be false
+    port: 587, // port for secure SMTP
+    tls: {
+       ciphers:'SSLv3'
+    },
+    auth: {
+        user: process.env.email,
+        pass: process.env.email_password
+    }
+});
+
+function sendMail(attendeeArray,event_date,event_title,event_description,event_starttime,event_endtime){
+    console.log("SEND MAIL CALLED");
+    // setup e-mail data, even with unicode symbols
+    let attendeesArray = [];
+    for(let i=0;i<attendeeArray.length;i++){
+        attendeesArray.push({
+            name:attendeeArray[i].name,
+            email:attendeeArray[i].email_id,
+            rsvp:true
+        })
+    }
+    // console.log(attendeesArray)
+
+    let event_start_time = new Date(event_starttime);
+    let event_end_time = new Date(event_endtime);
+    const event = {
+        start: [event_start_time.getFullYear(),event_start_time.getMonth(),event_start_time.getDate(),event_start_time.getHours(),event_start_time.getMinutes()],
+        end : [event_end_time.getFullYear(),event_end_time.getMonth(),event_end_time.getDate(),event_end_time.getHours(),event_end_time.getMinutes()],
+        title: event_title,
+        description: event_description,
+        location: 'Google Meet',
+        status: 'CONFIRMED',
+        busyStatus: 'BUSY',
+        organizer: { name: 'ADMIN - Saransh Hinger', email: 'saranshhinger@outlook.com' },
+        attendees: attendeesArray
+      }
+      ics.createEvent(event, (error, value) => {
+        if (error) {
+          console.log(">>>:",error)
+          return
+        }
+        let csvTo = "";
+        for(let i=0;i<attendeeArray.length;i++){
+            csvTo += attendeeArray[i].email_id;
+            if(i+1<attendeeArray.length){
+                csvTo += ','
+            }
+        }
+        console.log(value)
+        console.log(csvTo)
+        var mailOptions = {
+            from: '"SARANSH HINGER - ADMIN" <saranshhinger@outlook.com>', // sender address (who sends)
+            to: csvTo, // list of receivers (who receives)
+            subject: event_title, // Subject line
+            text: event_description, // plaintext body
+            icalEvent: {
+                filename: 'invitation.ics',
+                method: 'request',
+                content: value.toString()
+            }
+        };
+        transporter.sendMail(mailOptions, function(error, info){
+            if(error){
+                return console.log(">>>:>>>",error);
+            }
+    
+            console.log('Message sent: ' + info.response);
+        });
+    })
+    
+
+    
+    
+}
+// sendMail();
 
 router.get('/' , async (req,res) => {
     res.json({
@@ -119,7 +200,7 @@ router.post('/save-meeting',async(req,res) =>{
             let bookedEndTime = new Date(ret_data[i].booked[j].end);
             if(isBefore(bookedStartTime,eventEndTime) === true && isBefore(eventStartTime,bookedEndTime) === true){
                 console.log("------------------CLASHED----------------------------------",ret_data[i].name)
-                clashArray.push(ret_data[i].name);
+                clashArray.push({"name":ret_data[i].name,"_id":ret_data[i]._id});
                 break;
             }
         }
@@ -168,6 +249,8 @@ router.post('/save-meeting',async(req,res) =>{
         "clash":false,
         "new_meeting":saveMeeting
     })
+
+    // sendMail(ret_data,req.body.selected_date,req.body.title,req.body.description,req.body.start_time,req.body.end_time);
 
 })
 
@@ -293,6 +376,48 @@ router.post('/update-meeting',async(req,res)=>{
         "status":true,
         "clash":false,
     })
+    
 })
 
+router.post('/get-person-occupied-time',async(req,res)=>{
+    console.log("/get-person-occupied-time",req.body);
+    if(req.body.selectedDate === null || req.body.person_id == null){
+        res.json({
+            "status":false
+        })
+        return;
+    }
+    let DayStartingTime = new Date(req.body.selectedDate);
+    DayStartingTime = setHours(DayStartingTime,0);
+    DayStartingTime = setMinutes(DayStartingTime,0);
+    DayStartingTime = setSeconds(DayStartingTime,0);
+    let DayEndingTime = new Date(req.body.selectedDate);
+    DayEndingTime = setHours(DayEndingTime,23);
+    DayEndingTime = setMinutes(DayEndingTime,59);
+    DayEndingTime = setSeconds(DayEndingTime,59);
+    
+    console.log(DayStartingTime.toString(),DayEndingTime.toString());
+    let OccupiedInterval = [];
+    user_data = await User.findById(req.body.person_id);
+    
+    for(let i=0;i<user_data.booked.length;i++){
+        let bookedData = user_data.booked[i];
+
+        if(areIntervalsOverlapping(
+            { start: DayStartingTime, end: DayEndingTime },
+            { start: new Date(bookedData.start), end: new Date(bookedData.end) }
+          ) === true){
+            OccupiedInterval.push({
+                start:new Date(bookedData.start),
+                end : new Date(bookedData.end)
+            })
+          }
+    }
+    
+    res.json({
+        "status":true,
+        OccupiedInterval:OccupiedInterval
+    })
+
+})
 module.exports = router;

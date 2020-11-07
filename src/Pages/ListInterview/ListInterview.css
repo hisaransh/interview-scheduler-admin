@@ -2,7 +2,7 @@
     margin-left: 13%;
     margin-right: 13%;
     padding: 4vh;
-    min-width: 540px;
+    min-width: 100px;
     margin-top: 30px;
     border-radius: 18px;
 }
@@ -11,8 +11,8 @@
     padding: 2vh;
     border: 1px solid grey;
     min-height: 150px;
-    min-width: 308px;
-    max-width: 308px;
+    min-width: 277px;
+    max-width: 277px;
     border-radius:18px;
 }
 .meeting-title{
