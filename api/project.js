@@ -33,13 +33,12 @@ function sendMail(attendeeArray,event_date,event_title,event_description,event_s
             rsvp:true
         })
     }
-    // console.log(attendeesArray)
 
     let event_start_time = new Date(event_starttime);
     let event_end_time = new Date(event_endtime);
     const event = {
-        start: [event_start_time.getFullYear(),event_start_time.getMonth(),event_start_time.getDate(),event_start_time.getHours(),event_start_time.getMinutes()],
-        end : [event_end_time.getFullYear(),event_end_time.getMonth(),event_end_time.getDate(),event_end_time.getHours(),event_end_time.getMinutes()],
+        start: [event_start_time.getFullYear(),event_start_time.getMonth()+1,event_start_time.getDate(),event_start_time.getHours(),event_start_time.getMinutes()],
+        end : [event_end_time.getFullYear(),event_end_time.getMonth()+1,event_end_time.getDate(),event_end_time.getHours(),event_end_time.getMinutes()],
         title: event_title,
         description: event_description,
         location: 'Google Meet',

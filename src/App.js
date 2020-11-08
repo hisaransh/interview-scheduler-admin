@@ -1,5 +1,5 @@
 
-import ScheduleInterview from "./Pages/ScheduleInterview"
+import ScheduleInterview from "./Pages/ScheduleInterview/ScheduleInterview"
 import ListInterview from "./Pages/ListInterview"
 import EditInterview from "./Pages/ListInterview/EditInterview"
 import Navbar from "./Pages/Navbar"

@@ -9,192 +9,11 @@ import { id } from 'date-fns/locale';
 import{
     Link
     } from "react-router-dom"
-const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
-    const [options,handleOptions] = useState([]);
-    const [optionSelected, handleOptionSelected] = useState(interviewer);
-    const [loading,handleLoading] = useState(true);
 
-    function changeSelectedOptionHelper(e){
-        handleEventData((prevState) => ({
-            ...prevState,
-            interviewer:e
-        }))
-    }
-    useEffect(()=>{
-        fetch('http://localhost:8080/api/get-interviewer')
-        .then(response => response.json())
-        .then((response) => {
-            if(response.status === true){
-                console.log(response)
-                let tempOptionsArray = [];
-                for(let i=0;i<response.data.length;i++){
-                    tempOptionsArray.push({
-                        label:response.data[i].name,
-                        value:response.data[i]._id
-                    })
-                }
-                handleOptions(tempOptionsArray)
-            }
-            handleLoading(false)
-        }, function(error) {
-            console.log("Error in username api call",error.message)
-        });
-    },[])
+import MultiSelectInterviwer from './MultiSelectInterviewer'
+import MultiSelectInterviwee from './MultiSelectInterviewer'
+import ClashingPeople from './ClashingPeople'
 
-    useEffect(()=>{
-        handleOptionSelected(interviewer)
-    },[interviewer])
-
-    return (
-    <div>
-        <MultiSelect
-        options={options}
-        value={optionSelected}
-        onChange={changeSelectedOptionHelper}
-        labelledBy={"Select"}
-        isLoading={loading}
-        />
-    </div>
-    );
-}
-
-
-const MultiSelectInterviwee = ({interviewee,handleEventData}) => {
-    const [options,handleOptions] = useState([]);
-    const [optionSelected, handleOptionSelected] = useState(interviewee);
-    const [loading,handleLoading] = useState(true);
-
-    function changeSelectedOptionHelper(e){
-        handleEventData((prevState) => ({
-            ...prevState,
-            interviewee:e
-        }))
-    }
-    useEffect(()=>{
-        fetch('http://localhost:8080/api/get-interviewee')
-        .then(response => response.json())
-        .then((response) => {
-            if(response.status === true){
-                console.log(response)
-                let tempOptionsArray = [];
-                for(let i=0;i<response.data.length;i++){
-                    tempOptionsArray.push({
-                        label:response.data[i].name,
-                        value:response.data[i]._id
-                    })
-                }
-                handleOptions(tempOptionsArray)
-            }
-            handleLoading(false)
-        }, function(error) {
-            console.log("Error in username api call",error.message)
-        });
-        
-    },[])
-
-    useEffect(()=>{
-        handleOptionSelected(interviewee)
-    },[interviewee])
-
-    return (
-    <div>
-        <MultiSelect
-        options={options}
-        value={optionSelected}
-        onChange={changeSelectedOptionHelper}
-        labelledBy={"Select"}
-        isLoading={loading}
-        />
-    </div>
-    );
-}
-
-const ClashingTime = ({selectedDate,selectedPerson}) =>{
-    const [occupiedInterval,handleOccupiedInterval] = useState([]);
-    useEffect(()=>{
-        if(selectedDate === null || selectedPerson === null || selectedPerson === undefined || selectedDate === undefined){
-            return;
-        }
-        let api_data = {
-            selectedDate:selectedDate,
-            person_id:selectedPerson
-        }
-        console.log(api_data);
-        fetch("http://localhost:8080/api/get-person-occupied-time",{
-            "method":"POST",
-            "body":JSON.stringify(api_data),
-            "headers":{
-                "Content-type":"application/json"
-            }
-        })
-        .then((response)=> response.json())
-        .then((response)=>{
-            if(response.status === true){
-                handleOccupiedInterval(response.OccupiedInterval)
-            }else{
-                handleOccupiedInterval([])
-            }
-            console.log("Response",response);
-        })
-    },[selectedPerson])
-    function ShowOccupiedIntervalMap(){
-        return occupiedInterval.map((oI,index) => {
-            <tr key={index}>
-                <td>{oI.start.toString()}</td>
-                <td>{oI.end.toString()}</td>
-            </tr>
-        })
-    }
-    console.log(occupiedInterval);
-    if(selectedDate === null || selectedPerson === null || selectedPerson === undefined || selectedDate === undefined || occupiedInterval===undefined || occupiedInterval.length === 0){
-        return <></>
-    }else{
-        return(<div>
-            Clash
-            <table>
-                <th>
-                    <td>Start Time</td>
-                    <td>End Time</td>
-                </th>
-                {
-                    occupiedInterval.map( (oI,index) =>( 
-                        <tr key={index}>
-                            <td>{oI.start.toString()}</td>
-                            <td>{oI.end.toString()}</td>
-                        </tr>)
-                    )
-                }
-            </table>
-            </div>)
-    }
-}
-
-const ClashingPeople = ({clashArray,selectedDate})=>{
-    const[clashingArray,handleClashingArray] = useState(clashArray);
-    const [selectedPerson,handleSelectedPerson] = useState(null);
-    
-    useEffect(()=>{
-        handleClashingArray(clashArray)
-    },[clashArray])
-    console.log("CLASHING ARRAY",clashingArray,clashingArray.length)
-
-
-    if(clashingArray === null || clashingArray.length === 0 || clashingArray.length === undefined){
-        return <></>
-    }else{
-        return (<div>
-            Following people also have event at same time.Please reschedule it.
-            <div>
-                {clashingArray.map((ca)=> (
-                    <div key={ca._id} onClick={(e) => handleSelectedPerson(ca._id)}>
-                        {ca.name}
-                    </div>
-                ))}
-            </div>
-            <div>{}<ClashingTime selectedDate={selectedDate} selectedPerson={selectedPerson}/></div>
-        </div>)
-    }
-}
 
 const ScheduleInterview = () => {
     const [eventData,handleEventData] = useState({
@@ -332,6 +151,7 @@ const ScheduleInterview = () => {
                     interviewerError:"",
                     timeError:""
                 })
+                handleClashingArray([])
                 handleInterviewCreated(true)
             }else if(response.status === true && response.clash === true){
                 handleClashingArray(response.clashArray)
@@ -347,20 +167,6 @@ const ScheduleInterview = () => {
         
     
     }
-    // function ShowClashingPeople(){
-    //     if(clashingArray.length === 0){
-    //         return <></>
-    //     }else{
-    //         return (<div>
-    //             Following people also have event at same time.Please reschedule it.
-    //             {clashingArray.map((val,index)=> (
-    //                 <div key={index}>
-    //                     {val}
-    //                 </div>
-    //             ))}
-    //         </div>)
-    //     }
-    // }
     if(isInterviewCreated === false){
     return (
         <div className="mb-5">
@@ -454,6 +260,7 @@ const ScheduleInterview = () => {
         return (<div>
             Your Meeting saved
             <Link to="/">List all interview</Link>
+            <div onClick={(e) => handleInterviewCreated(false)}>Add Another Meeting</div>
             </div>)
     }
 }
