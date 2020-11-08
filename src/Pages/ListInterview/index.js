@@ -26,7 +26,7 @@ export default function App(){
                 meeting_api_data.sort(function(a,b){
                     return new Date(a.start_time)-new Date(b.start_time);
                 });
-                meeting_api_data = meeting_api_data.filter((mad) => {return isBefore(addDays(new Date(),-1),new Date(mad.meeting_date)) })
+                meeting_api_data = meeting_api_data.filter((mad) => {return isBefore(new Date(),new Date(mad.end_time)) })
                 console.log(meeting_api_data)
                 handleMeetingData(meeting_api_data)
             }
@@ -101,8 +101,8 @@ export default function App(){
                         <span className="sr-only">Loading...</span>
                     </div>
                 ):(
-                    <div className="container-div1 d-flex flex-column mb-5">
-                        <div className="" style={{fontSize:'20px',padding:'2vh'}}>
+                    <div className="container-div1 d-flex flex-column mb-5" style={{border:'0px'}}>
+                        <div className="" style={{fontSize:'30px',padding:'2vh'}}>
                         Upcoming interviews
                         </div>
                         <div className="d-flex flex-row flex-wrap mt-4">

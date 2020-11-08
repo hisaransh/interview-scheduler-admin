@@ -11,8 +11,9 @@ import {
     Link,
     useParams,
     Redirect,
-    useLocation
+    useLocation,
   } from "react-router-dom";
+  import { ToastContainer, toast } from 'react-toastify';
 
 import ClashingPeople from '../ScheduleInterview/ClashingPeople'
 
@@ -133,6 +134,26 @@ export default function EditInterview(){
     })
     const [clashingArray,handleClashingArray] = useState([]);
     const [updated,handleUpdated] = useState(false);
+    const notifySuccess = (text) => toast.success(text, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        });
+    
+    const notifyError = (text) => toast.error(text, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        });
+        
     useEffect(()=>{
         handleEventData({
             title:MeetingData.data.title,
@@ -301,9 +322,10 @@ export default function EditInterview(){
         .then(response => {
             console.log("RESPONSE  ",response)
             if(response.status === true && response.clash === false){
+                notifySuccess("Meeting Updated 😇")
                 handleUpdated(true)
             }else if(response.status === true && response.clash === true){
-                console.log(response)
+                notifyError("There is Clash in Timings ")
                 handleClashingArray(response.clashArray)
             }else{
                 handleErrors({
@@ -312,6 +334,7 @@ export default function EditInterview(){
                     interviewerError:response.interviewerError,
                     timeError:response.timeError
                 })
+                notifyError("There is Error in Input Data")
             }
         })
 
@@ -330,99 +353,113 @@ export default function EditInterview(){
             </div>
         }
     }
-    if(updated === false){
     return (
-        <div className="mb-5">
-            <div className="container-div1 d-flex flex-column">
-                <div style={{fontSize:'20px'}}>
-                        Edit the following Interview
+        <div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable={false}
+                pauseOnHover={false}
+            />
+            {updated===false?(
+                <div className="mb-5">
+                    <div className="container-div1 d-flex flex-column">
+                        <div style={{fontSize:'20px'}}>
+                                Edit the following Interview
+                        </div>
+                        <div className="mt-2" style={{width:'322px'}}>
+                            <div className="mt-4">
+                                <div>
+                                    Title *
+                                </div>
+                                <div className="mt-1" style={{height:'38px'}}>
+                                    <input type="text" className="input-title" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
+                                </div>
+                                <div className="mt-1" style={{color:'red'}}>
+                                    {errors.titleError}
+                                </div>
+                            </div>
+        
+                            <div className="mt-3">
+                                <div>
+                                    Description
+                                </div>
+                                <div className="mt-1">
+                                    <textarea className="input-description" value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <div>
+                                    Select Interviewer(s) *
+                                </div>
+                                <div className="mt-1">
+                                    <MultiSelectInterviwer interviewer={interviewer} handleEventData={handleInterviewer}/>
+                                </div>
+                                <div className="mt-1" style={{color:'red'}}>
+                                    {errors.interviewerError}
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <div>
+                                    Select Interviewee(s) *
+                                </div>
+                                <div className="mt-1">
+                                    <MultiSelectInterviwee interviewee={interviewee} handleEventData={handleInterviewee}/>
+                                </div>
+                                <div className="mt-1" style={{color:'red'}}>
+                                    {errors.intervieweeError}
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <div>
+                                    Choose Date *
+                                </div>
+                                <div>
+                                <Calendar
+                                    date={selectedDate}
+                                    minDate={new Date()}
+                                    onChange={handleSelect}
+                                />
+                                </div>
+                            </div>
+                            <div className="mt-3">
+                                <div>
+                                    Time in 24 Hour Format *
+                                </div>
+                                <div className="d-flex mt-2">
+                                    <div>Start Time</div>
+                                    <div>&nbsp;&nbsp;&nbsp;</div>
+                                    <div>End Time</div>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <input type="text" maxLength="5" className="timeinput" placeholder="HH:MM" value={eventDataTime.start} onChange={(e) => handleEventDataTime({...eventDataTime,start:e.target.value})} />
+                                    <div>&nbsp;{"-"}&nbsp;</div>
+                                    <input type="text" maxLength="5" className="timeinput" placeholder="HH:MM" value={eventDataTime.end} onChange={(e) => handleEventDataTime({...eventDataTime,end:e.target.value})} />
+                                </div>
+                                <div className="mt-1" style={{color:'red'}}>
+                                    {errors.timeError}
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <button className="btn btn-primary" onClick={updateMeeting} >Update</button>
+                            </div>
+                        </div>
+                        <ClashingPeople clashArray={clashingArray} selectedDate={selectedDate}/>
+                    </div>
                 </div>
-                <div className="mt-2" style={{width:'322px'}}>
-                    <div className="mt-4">
-                        <div>
-                            Title *
-                        </div>
-                        <div className="mt-1" style={{height:'38px'}}>
-                            <input type="text" className="input-title" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
-                        </div>
-                        <div className="mt-1" style={{color:'red'}}>
-                            {errors.titleError}
-                        </div>
-                    </div>
-
-                    <div className="mt-3">
-                        <div>
-                            Description
-                        </div>
-                        <div className="mt-1">
-                            <textarea className="input-description" value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
-                        </div>
-                    </div>
-                    <div className="mt-3">
-                        <div>
-                            Select Interviewer(s) *
-                        </div>
-                        <div className="mt-1">
-                            <MultiSelectInterviwer interviewer={interviewer} handleEventData={handleInterviewer}/>
-                        </div>
-                        <div className="mt-1" style={{color:'red'}}>
-                            {errors.interviewerError}
-                        </div>
-                    </div>
-                    <div className="mt-3">
-                        <div>
-                            Select Interviewee(s) *
-                        </div>
-                        <div className="mt-1">
-                            <MultiSelectInterviwee interviewee={interviewee} handleEventData={handleInterviewee}/>
-                        </div>
-                        <div className="mt-1" style={{color:'red'}}>
-                            {errors.intervieweeError}
-                        </div>
-                    </div>
-                    <div className="mt-3">
-                        <div>
-                            Choose Date *
-                        </div>
-                        <div>
-                        <Calendar
-                            date={selectedDate}
-                            minDate={new Date()}
-                            onChange={handleSelect}
-                        />
-                        </div>
-                    </div>
-                    <div className="mt-3">
-                        <div>
-                            Time in 24 Hour Format *
-                        </div>
-                        <div className="d-flex mt-2">
-                            <div>Start Time</div>
-                            <div>&nbsp;&nbsp;&nbsp;</div>
-                            <div>End Time</div>
-                        </div>
-                        <div className="d-flex align-items-center">
-                            <input type="text" maxLength="5" className="timeinput" placeholder="HH:MM" value={eventDataTime.start} onChange={(e) => handleEventDataTime({...eventDataTime,start:e.target.value})} />
-                            <div>&nbsp;{"-"}&nbsp;</div>
-                            <input type="text" maxLength="5" className="timeinput" placeholder="HH:MM" value={eventDataTime.end} onChange={(e) => handleEventDataTime({...eventDataTime,end:e.target.value})} />
-                        </div>
-                        <div className="mt-1" style={{color:'red'}}>
-                            {errors.timeError}
-                        </div>
-                    </div>
-                    <div className="mt-4">
-                        <button className="btn btn-primary" onClick={updateMeeting} >Update</button>
-                    </div>
+            ):(
+                <div className="containter">
+                    Meeting updated
+                    <br/>
+                    <Link to="/">Go to Home</Link>
                 </div>
-                <ClashingPeople clashArray={clashingArray} selectedDate={selectedDate}/>
-            </div>
+            )}
         </div>
-    )}
-    else{
-        return (
-            <div>
-                Meeting updated
-            </div>
-        )
-    }
+        
+    )
 }
