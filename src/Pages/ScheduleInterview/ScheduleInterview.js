@@ -10,8 +10,9 @@ import{
     Link
     } from "react-router-dom"
 
-import MultiSelectInterviwer from './MultiSelectInterviewer'
-import MultiSelectInterviwee from './MultiSelectInterviewer'
+import MultiSelectInterviwer from './MultiSelectInterviwer'
+import MultiSelectInterviwee from './MultiSelectInterviwee'
+
 import ClashingPeople from './ClashingPeople'
 
 
@@ -180,7 +181,7 @@ const ScheduleInterview = () => {
                             Title *
                         </div>
                         <div className="mt-1" style={{height:'38px'}}>
-                            <input type="text" style={{height:'100%',width:'100%',padding:'1vh'}} value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
+                            <input type="text" className="input-title" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.titleError}
@@ -192,7 +193,7 @@ const ScheduleInterview = () => {
                             Description
                         </div>
                         <div className="mt-1">
-                            <textarea style={{height:'150px',width:'100%',padding:'1vh'}} value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
+                            <textarea className="input-description" value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
                         </div>
                     </div>
                     <div className="mt-3">
@@ -249,10 +250,10 @@ const ScheduleInterview = () => {
                     </div>
                     <div className="mt-4">
                         <button className="btn btn-primary" onClick={saveMeeting}>Save</button>
-                    </div>
-                    <div className="mt-4">
+                    </div>    
+                </div>
+                <div>
                         <ClashingPeople clashArray={clashingArray} selectedDate={selectedDate} />
-                    </div>
                 </div>
             </div>
         </div>

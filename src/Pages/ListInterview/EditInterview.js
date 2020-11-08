@@ -14,6 +14,8 @@ import {
     useLocation
   } from "react-router-dom";
 
+import ClashingPeople from '../ScheduleInterview/ClashingPeople'
+
   const MultiSelectInterviwer = ({interviewer,handleEventData}) => {
     const [options,handleOptions] = useState([]);
     const [optionSelected, handleOptionSelected] = useState(interviewer);
@@ -332,7 +334,7 @@ export default function EditInterview(){
     return (
         <div className="mb-5">
             <div className="container-div1 d-flex flex-column">
-                <div>
+                <div style={{fontSize:'20px'}}>
                         Edit the following Interview
                 </div>
                 <div className="mt-2" style={{width:'322px'}}>
@@ -340,8 +342,8 @@ export default function EditInterview(){
                         <div>
                             Title *
                         </div>
-                        <div className="mt-1" style={{width:'38px'}}>
-                            <input type="text" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
+                        <div className="mt-1" style={{height:'38px'}}>
+                            <input type="text" className="input-title" value={eventData.title} onChange={(e)=>handleEventData({...eventData,title:e.target.value})} />
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.titleError}
@@ -353,32 +355,32 @@ export default function EditInterview(){
                             Description
                         </div>
                         <div className="mt-1">
-                            <textarea style={{height:'150px'}} value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
+                            <textarea className="input-description" value={eventData.description} onChange={(e)=>handleEventData({...eventData,description:e.target.value})}/>
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Select Interviewer(s) *
                         </div>
-                        <div>
+                        <div className="mt-1">
                             <MultiSelectInterviwer interviewer={interviewer} handleEventData={handleInterviewer}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.interviewerError}
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Select Interviewee(s) *
                         </div>
-                        <div>
+                        <div className="mt-1">
                             <MultiSelectInterviwee interviewee={interviewee} handleEventData={handleInterviewee}/>
                         </div>
                         <div className="mt-1" style={{color:'red'}}>
                             {errors.intervieweeError}
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Choose Date *
                         </div>
@@ -390,11 +392,11 @@ export default function EditInterview(){
                         />
                         </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-3">
                         <div>
                             Time in 24 Hour Format *
                         </div>
-                        <div className="d-flex">
+                        <div className="d-flex mt-2">
                             <div>Start Time</div>
                             <div>&nbsp;&nbsp;&nbsp;</div>
                             <div>End Time</div>
@@ -408,12 +410,11 @@ export default function EditInterview(){
                             {errors.timeError}
                         </div>
                     </div>
-                    <ShowClashingPeople />
-                    <div className="mt-2">
+                    <div className="mt-4">
                         <button className="btn btn-primary" onClick={updateMeeting} >Update</button>
                     </div>
-                    
                 </div>
+                <ClashingPeople clashArray={clashingArray} selectedDate={selectedDate}/>
             </div>
         </div>
     )}

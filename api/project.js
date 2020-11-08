@@ -328,7 +328,7 @@ router.post('/update-meeting',async(req,res)=>{
                 let bookedEndTime = new Date(ret_data[i].booked[j].end);
                 if(isBefore(bookedStartTime,eventEndTime) === true && isBefore(eventStartTime,bookedEndTime) === true){
                     console.log("------------------CLASHED----------------------------------",ret_data[i].name)
-                    clashArray.push(ret_data[i].name);
+                    clashArray.push({"name":ret_data[i].name,"_id":ret_data[i]._id});
                     break;
                 }
             }

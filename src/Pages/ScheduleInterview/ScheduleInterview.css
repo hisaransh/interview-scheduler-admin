@@ -10,3 +10,30 @@
     width: 74px;
     text-align: center;
 }
+
+.clashing-people-div1{
+    border: 1px solid black;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.person-list:hover{
+    text-decoration: underline;
+}
+
+td{
+    width: 150px;
+    text-align: center;
+}
+
+.input-title{
+    height:100%;
+    width:100%;
+    padding:'1vh'
+}
+
+.input-description{
+    height:150px;
+    width:100%;
+    padding:1vh
+}
