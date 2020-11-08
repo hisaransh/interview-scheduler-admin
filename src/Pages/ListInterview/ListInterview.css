@@ -33,3 +33,16 @@
     font-size:15px;
     margin-left: 10px;
 }
+.search-div{
+    margin-left: 2vh;
+}
+.search-input{
+    margin-left: 12px;
+    border-width: 0px 0px 1px 0px;
+}
+.search-input:focus{
+    outline:none;
+    border-width: 0px 0px 1px 0px;
+    border-bottom:blueviolet;
+    border-style:solid;
+}
