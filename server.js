@@ -27,6 +27,11 @@ server.use(bodyParser.urlencoded({extended:true}));
 
 server.use('/api',apiRoute);
 
+server.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+
 server.listen(port, () => {
   console.log(`App is now listening at http://localhost:${port}`)
 })
