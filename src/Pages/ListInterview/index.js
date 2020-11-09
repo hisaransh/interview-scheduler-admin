@@ -5,47 +5,6 @@ import{
     } from "react-router-dom"
     import {addDays,isAfter,isBefore,format,setMinutes,setHours,setSeconds,addMinutes} from 'date-fns'
 import "./ListInterview.css"
-import Navbar from "../Navbar"
-
-/*
-function MeetingMap(){
-        if(meetingData === null){
-            return <></>
-        }else if(meetingData.length === 0){
-            return <div>There are no interview scheduled.</div>
-        }else{
-            return meetingData.map((md)=>(
-                <div key={md._id} className="meeting-div">
-                    <div className="meeting-title">{md.title}</div>
-                    <div className="d-flex align-items-center">
-                        <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                            <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
-                        </svg>
-                        <div className="meeting-details" >{getDate(md.meeting_date)}</div>
-                    </div>
-                    <div className="d-flex align-items-center">
-                        <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
-                            <path fillRule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-                        </svg>
-                        <div className="meeting-details">{getTime(md.start_time)} - {getTime(md.end_time)}</div>
-                    </div>
-                    <Link to={{pathname:"/edit-interview",state:{data:md}}}  >
-                        <div className='d-flex align-items-center' >
-                            <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fillRule="evenodd" d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                            </svg>
-                            <div className="meeting-details">Edit</div>
-                        </div>
-                    </Link>
-                </div>
-            ))
-        }
-    }
-
-
-*/
 
 const MeetingMap = ({meetingData}) =>{
     const[meeting_data,handleMeetingData] = useState(meetingData)
@@ -179,41 +138,6 @@ export default function App(){
         return hour + ":" + minute
     }
     
-    // function MeetingMap(){
-    //     if(meetingData === null){
-    //         return <></>
-    //     }else if(meetingData.length === 0){
-    //         return <div>There are no interview scheduled.</div>
-    //     }else{
-    //         return meetingData.map((md)=>(
-    //             <div key={md._id} className="meeting-div">
-    //                 <div className="meeting-title">{md.title}</div>
-    //                 <div className="d-flex align-items-center">
-    //                     <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-calendar-event" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    //                         <path fillRule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-    //                         <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
-    //                     </svg>
-    //                     <div className="meeting-details" >{getDate(md.meeting_date)}</div>
-    //                 </div>
-    //                 <div className="d-flex align-items-center">
-    //                     <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-clock" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    //                         <path fillRule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm8-7A8 8 0 1 1 0 8a8 8 0 0 1 16 0z"/>
-    //                         <path fillRule="evenodd" d="M7.5 3a.5.5 0 0 1 .5.5v5.21l3.248 1.856a.5.5 0 0 1-.496.868l-3.5-2A.5.5 0 0 1 7 9V3.5a.5.5 0 0 1 .5-.5z"/>
-    //                     </svg>
-    //                     <div className="meeting-details">{getTime(md.start_time)} - {getTime(md.end_time)}</div>
-    //                 </div>
-    //                 <Link to={{pathname:"/edit-interview",state:{data:md}}}  >
-    //                     <div className='d-flex align-items-center' >
-    //                         <svg width="15px" height="15px" viewBox="0 0 16 16" className="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    //                             <path fillRule="evenodd" d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-    //                         </svg>
-    //                         <div className="meeting-details">Edit</div>
-    //                     </div>
-    //                 </Link>
-    //             </div>
-    //         ))
-    //     }
-    // }
     console.log(meetingData);
     
     return(
